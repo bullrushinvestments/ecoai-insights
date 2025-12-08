@@ -1,0 +1,167 @@
+interface BuildCommand {
+    command: string;
+    output?: string;
+}
+
+interface EnvTemplate {
+    [key: string]: string | undefined;
+}
+
+interface HeaderRule {
+    source: string;
+    headers: Array<{ key: string; value: string }>;
+}
+
+interface CacheStrategy {
+    rules: Array<{
+        urlPattern: string;
+        purgeOnBuild: boolean;
+        edgeTtl?: number;
+        browserTtl?: number;
+    }>;
+}
+
+interface FrameworkSettings {
+    vercel?: { [key: string]: any };
+    netlify?: { [key: string]: any };
+}
+
+interface DeployConfig {
+    build: BuildCommand;
+    env: EnvTemplate;
+    headers: Array<HeaderRule>;
+    cache: CacheStrategy;
+    framework: FrameworkSettings;
+}
+
+export const deployConfig: DeployConfig = {
+    build: {
+        command: "next build",
+        output: ".next"
+    },
+    env: {
+        NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+        NEXT_PRIVATE_SECRET_KEY: process.env.NEXT_PRIVATE_SECRET_KEY
+    },
+    headers: [
+        {
+            source: "/(.*)",
+            headers: [
+                { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains; preload" },
+                { key: "X-Frame-Options", value: "DENY" },
+                { key: "X-XSS-Protection", value: "1; mode=block" },
+                { key: "X-Content-Type-Options", value: "nosniff" }
+            ]
+        }
+    ],
+    cache: {
+        rules: [
+            {
+                urlPattern: "/static/(.*)",
+                purgeOnBuild: true,
+                edgeTtl: 3600
+            },
+            {
+                urlPattern: "/api/(.*)",
+                browserTtl: 0
+            }
+        ]
+    },
+    framework: {
+        vercel: {
+            buildCommand: "next build",
+            previewBuildCommand: "next build && next export"
+        },
+        netlify: {
+            publish: ".next/*",
+            functions: "functions",
+            redirects: [
+                { from: "/old-url", to: "/new-url", status: 301 }
+            ]
+        }
+    }
+};
+
+interface BuildCommand {
+    command: string;
+    output?: string;
+}
+
+interface EnvTemplate {
+    [key: string]: string | undefined;
+}
+
+interface HeaderRule {
+    source: string;
+    headers: Array<{ key: string; value: string }>;
+}
+
+interface CacheStrategy {
+    rules: Array<{
+        urlPattern: string;
+        purgeOnBuild: boolean;
+        edgeTtl?: number;
+        browserTtl?: number;
+    }>;
+}
+
+interface FrameworkSettings {
+    vercel?: { [key: string]: any };
+    netlify?: { [key: string]: any };
+}
+
+interface DeployConfig {
+    build: BuildCommand;
+    env: EnvTemplate;
+    headers: Array<HeaderRule>;
+    cache: CacheStrategy;
+    framework: FrameworkSettings;
+}
+
+export const deployConfig: DeployConfig = {
+    build: {
+        command: "next build",
+        output: ".next"
+    },
+    env: {
+        NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+        NEXT_PRIVATE_SECRET_KEY: process.env.NEXT_PRIVATE_SECRET_KEY
+    },
+    headers: [
+        {
+            source: "/(.*)",
+            headers: [
+                { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains; preload" },
+                { key: "X-Frame-Options", value: "DENY" },
+                { key: "X-XSS-Protection", value: "1; mode=block" },
+                { key: "X-Content-Type-Options", value: "nosniff" }
+            ]
+        }
+    ],
+    cache: {
+        rules: [
+            {
+                urlPattern: "/static/(.*)",
+                purgeOnBuild: true,
+                edgeTtl: 3600
+            },
+            {
+                urlPattern: "/api/(.*)",
+                browserTtl: 0
+            }
+        ]
+    },
+    framework: {
+        vercel: {
+            buildCommand: "next build",
+            previewBuildCommand: "next build && next export"
+        },
+        netlify: {
+            publish: ".next/*",
+            functions: "functions",
+            redirects: [
+                { from: "/old-url", to: "/new-url", status: 301 }
+            ]
+        }
+    }
+};
